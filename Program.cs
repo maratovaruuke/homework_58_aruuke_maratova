@@ -1,36 +1,47 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using homework_59_aruuke_maratova.Utils;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using homework_59_aruuke_maratova.Models;
+
 namespace homework_59_aruuke_maratova
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var host = CreateHostBuilder(args).Build();
+            using var scope = host.Services.CreateScope();
+            var services = scope.ServiceProvider;
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
+            try
             {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                var userManager = services.GetRequiredService<UserManager<User>>();
+                var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                await AdminInitializer.SeedAdminUser(rolesManager, userManager);
             }
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred while seeding the database.");
+            }
 
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-
-            app.Run();
+            host.Run();
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }
