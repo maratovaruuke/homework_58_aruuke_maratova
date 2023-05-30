@@ -9,13 +9,56 @@
     <img class="myimg col-8 p-0" src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.Img))" />
 
     <div class="col-4 p-0 pl-2">
-        <div class="top_bar px-2">
+        <div class="top_bar px-2 pb-0">
             <div class="profile_img">
                 <img src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.User.Avatar))" alt="Avatar">
                 <a class="instagram-card-user-name" asp-controller="Instagram" asp-action="Profile"
                    asp-route-id="@Model.User.Id">@Model.User.UserName</a>
-                <i class="fa fa-ellipsis-h float-right pr-3"></i>
             </div>
+
+            @if (Model.UserId == ViewBag.UserId)
+            {
+                <button id="more-modal-btn" type="button" class="btn btn-link text-dark">
+                    <i class="fa fa-ellipsis-h float-right pr-3"></i>
+                </button>
+            }
+
+
+            <div class="modal fade" id="more-modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" examplearia-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body px-0 text-center">
+                            <button id="delete-btn" type="button" class="btn btn-link text-danger font-weight-bold text-decoration-none">
+                                Delete
+                            </button>
+                            <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true"
+                                 style="margin: -10px;">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-body py-4">
+                                            <span style="font-size: 20px">Delete Post?</span><br />
+                                            <small class="text-muted">Are you sure you want to delete this post?</small>
+                                        </div>
+                                        <hr class="text-dark m-1" />
+                                        <button id="delete" type="button" class="btn btn-link text-danger font-weight-bold text-decoration-none">
+                                            Delete
+                                        </button>
+                                        <hr class="text-dark m-1" />
+                                        <button type="button" class="btn btn-link text-dark text-decoration-none" data-dismiss="modal">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <button type="button" class="btn btn-link text-dark text-decoration-none" id="edit">Edit</button>
+                            <hr />
+                            <button type="button" class="btn btn-link text-dark text-decoration-none" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <hr class="mb-0" />
@@ -28,64 +71,143 @@
                     </div>
                     <p class="col-9 p-0" style="font-weight: 400; font-size: 14px;">
                         <a class="instagram-card-user-name m-0"
-                           asp-controller="Instagram" asp-action="Profile" asp-route-id="@Model.User.Id">@Model.User.UserName</a>
+                       asp-controller="Instagram" asp-action="Profile" asp-route-id="@Model.User.Id">@Model.User.UserName</a>
                         @Model.Caption
                     </p>
                 </div>
             </div>
         }
-    <div class="comment-section">
-        @foreach (var comment in Model.Comments.AsQueryable().OrderBy(c => c.CreatedAt))
-        {
-            <div class="top_bar row pl-2 pr-0 px-2 m-0">
-                <div class="profile_img col-3 align-self-start px-0">
-                    <img src="data:image/jpeg;base64,@(Convert.ToBase64String(comment.User.Avatar))" alt="Avatar">
-                </div>
-                <p class="col-9 p-0" style="font-weight: 400; font-size: 14px;">
-                    <a class="instagram-card-user-name m-0"
+        <div class="comment-section">
+            @foreach (var comment in Model.Comments.AsQueryable().OrderBy(c => c.CreatedAt))
+            {
+                <div class="top_bar row pl-2 pr-0 px-2 m-0">
+                    <div class="profile_img col-3 align-self-start px-0">
+                        <img src="data:image/jpeg;base64,@(Convert.ToBase64String(comment.User.Avatar))" alt="Avatar">
+                    </div>
+                    <p class="col-9 p-0" style="font-weight: 400; font-size: 14px;">
+                        <a class="instagram-card-user-name m-0"
                        asp-controller="Instagram" asp-action="Profile" asp-route-id="@comment.User.Id">@comment.User.UserName</a>
-                    @comment.Text
-                </p>
-            </div>
-        }
-    </div>
-            <div class="Model-footer">
-                <hr class="mb-0"/>
-                <div class="icons">
-                    <div class="left_side pl-3">
-                        @if (!Model.Likes.Exists(l => l.UserId == ViewBag.UserId))
-                        {
-                            <a class="text-white" asp-controller="Instagram" asp-route-id="@Model.Id" asp-action="Like">
-                                <i class="far fa-heart" aria-hidden="true"></i>
-                            </a>
-                        }
-                        else
-                        {
-                            <a class="text-white" asp-controller="Instagram" asp-route-id="@Model.Id" asp-action="RemoveLike">
-                                <i class="fas fa-heart" aria-hidden="true" style="color: deeppink; margin-right: 10px"></i>
-                            </a>
-                        }
-                        <i class="far fa-comment" aria-hidden="true"></i>
-                        <div class="time">@ViewBag.time</div>
-                    </div>
+                        @comment.Text
+                    </p>
                 </div>
-                <hr class="my-1 mb-0" />
-            </div>
-
-            <div class="comments_box">
-                <form method="post" asp-controller="Instagram" asp-action="AddComment" asp-anti-forgery="true">
-                    <input type="hidden" name="id" value="@Model.Id" />
-                    <div class="form-inline">
-                        <div class="input_field pl-3">
-                            <input type="text" placeholder="Add a Comment..." name="text">
-                        </div>
-                        <input type="hidden" name="action" value="details" />
-                        <div class="btn"><button type="submit">Post</button></div>
-                    </div>
-                </form>
-            </div>
+            }
         </div>
+        <div class="Model-footer">
+            <hr class="mb-0" />
+            <div class="icons">
+                <div class="left_side pl-3">
+                    @if (!Model.Likes.Exists(l => l.UserId == ViewBag.UserId))
+                    {
+                        <a class="text-white" id="like">
+                            <i class="far fa-heart" aria-hidden="true"></i>
+                        </a>
+                        <a class="text-white" id="removeLike" style="display: none;">
+                            <i class="fas fa-heart" aria-hidden="true" style="color: deeppink; margin-right: 10px"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="text-white" id="removeLike">
+                            <i class="fas fa-heart" aria-hidden="true" style="color: deeppink; margin-right: 10px"></i>
+                        </a>
+                        <a class="text-white" id="like" style="display: none;">
+                            <i class="far fa-heart" aria-hidden="true"></i>
+                        </a>
+                    }
+                    <i class="far fa-comment" aria-hidden="true"></i>
+                    <div class="time">@ViewBag.time</div>
+                </div>
+            </div>
+            <hr class="my-1 mb-0" />
+        </div>
+
+        <div class="comments_box">
+            <form method="post" asp-controller="Instagram" asp-action="AddComment" asp-anti-forgery="true">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div class="form-inline">
+                    <div class="input_field pl-3">
+                        <input type="text" placeholder="Add a Comment..." name="text">
+                    </div>
+                    <input type="hidden" name="action" value="details" />
+                    <div class="btn"><button type="submit">Post</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<script>
+    $('#like').on('click',
+        () => {
+            $.post('@Url.Action("Like", "Instagram")',
+                {
+                    id: '@Model.Id'
+                }
+            ).done(function (data) {
+                $("#like").hide();
+                $("#removeLike").show();
+            });
+        });
+
+    $('#removeLike').on('click',
+        () => {
+            $.post('@Url.Action("RemoveLike", "Instagram")',
+                {
+                    id: '@Model.Id'
+                }
+            ).done(function (data) {
+                $("#removeLike").hide();
+                $("#like").show();
+            });
+        });
+
+    $("#more-modal-btn").click(function () {
+        $('#more-modal').modal('show');
+    });
+
+    $("#delete-btn").click(function () {
+        // $('#more-modal').modal('hide');
+        $('#delete-modal').modal('show');
+
+    });
+
+    $('#edit').on('click',
+        () => {
+            $.get('@Url.Action("Edit", "Posts")',
+                {
+                    id: '@Model.Id'
+                }).done(function (data) {
+                    $('body').html(data);
+                }).fail(function (xhr, a, error) {
+                    console.log(error);
+                });;
+        });
+
+    $('#edit-save').on('click',
+        () => {
+            $.post('@Url.Action("Edit", "Posts")',
+                {
+                    id: '@Model.Id'
+                }).done(function (data) {
+                    $('body').html(data);
+                }).fail(function (xhr, a, error) {
+                    console.log(error);
+                });;
+        });
+
+    $('#delete').on('click',
+        () => {
+            $.post('@Url.Action("Delete", "Posts")',
+                {
+                    postId: '@Model.Id'
+                }).done(function (data) {
+                    $('body').html(data);
+                }).fail(function (xhr, a, error) {
+                    console.log(error);
+                });;
+        });
+
+</script>
 
 <style>
     .myimg {
@@ -100,7 +222,7 @@
         height: 150px;
         border-radius: 50%;
     }
-    
+
     .Model {
         width: 640px;
         background: #ffffff;
@@ -237,6 +359,7 @@
         overflow-x: hidden;
         word-wrap: break-word;
     }
+
         .comment-section::-webkit-scrollbar {
             display: none;
         }

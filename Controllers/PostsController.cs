@@ -112,6 +112,21 @@ namespace homework_59_aruuke_maratova.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult> Delete(int postId)
+        {
+            if (postId != 0)
+            {
+                Post post = await _context.Posts.FindAsync(postId);
+                _context.Entry(post).State = EntityState.Deleted;
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Profile", "Instagram", new { id = post.UserId });
+            }
+            return View();
+        }
+
+
+
         private static byte[] GetImg(CreatePostViewModel model)
         {
             byte[] imageData = null;
