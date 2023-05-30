@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using homework_59_aruuke_maratova.Models;
@@ -11,9 +12,10 @@ using homework_59_aruuke_maratova.Models;
 namespace homework_59_aruuke_maratova.Migrations
 {
     [DbContext(typeof(InstagramContext))]
-    partial class InstagramContextModelSnapshot : ModelSnapshot
+    [Migration("20230530130231_AddedFollow")]
+    partial class AddedFollow
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
