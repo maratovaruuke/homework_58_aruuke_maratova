@@ -48,6 +48,7 @@ namespace homework_59_aruuke_maratova
                 })
 
                 .AddEntityFrameworkStores<InstagramContext>();
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
