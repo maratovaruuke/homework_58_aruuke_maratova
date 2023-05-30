@@ -1,0 +1,243 @@
+﻿@model Post
+
+@{
+    ViewBag.Title = @Model.User.UserName;
+    Layout = "_Layout";
+}
+
+<div class="row post">
+    <img class="myimg col-8 p-0" src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.Img))" />
+
+    <div class="col-4 p-0 pl-2">
+        <div class="top_bar px-2">
+            <div class="profile_img">
+                <img src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.User.Avatar))" alt="Avatar">
+                <a class="instagram-card-user-name" asp-controller="Instagram" asp-action="Profile"
+                   asp-route-id="@Model.User.Id">@Model.User.UserName</a>
+                <i class="fa fa-ellipsis-h float-right pr-3"></i>
+            </div>
+        </div>
+
+        <hr class="mb-0" />
+        @if (Model.Caption != null)
+        {
+            <div class="top_bar px-0">
+                <div class="profile_img row pl-2 pr-0 px-2 m-0">
+                    <div class="profile_img col-3 align-self-start px-0">
+                        <img src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.User.Avatar))" alt="Avatar">
+                    </div>
+                    <p class="col-9 p-0" style="font-weight: 400; font-size: 14px;">
+                        <a class="instagram-card-user-name m-0"
+                           asp-controller="Instagram" asp-action="Profile" asp-route-id="@Model.User.Id">@Model.User.UserName</a>
+                        @Model.Caption
+                    </p>
+                </div>
+            </div>
+        }
+    <div class="comment-section">
+        @foreach (var comment in Model.Comments.AsQueryable().OrderBy(c => c.CreatedAt))
+        {
+            <div class="top_bar row pl-2 pr-0 px-2 m-0">
+                <div class="profile_img col-3 align-self-start px-0">
+                    <img src="data:image/jpeg;base64,@(Convert.ToBase64String(comment.User.Avatar))" alt="Avatar">
+                </div>
+                <p class="col-9 p-0" style="font-weight: 400; font-size: 14px;">
+                    <a class="instagram-card-user-name m-0"
+                       asp-controller="Instagram" asp-action="Profile" asp-route-id="@comment.User.Id">@comment.User.UserName</a>
+                    @comment.Text
+                </p>
+            </div>
+        }
+    </div>
+            <div class="Model-footer">
+                <hr class="mb-0"/>
+                <div class="icons">
+                    <div class="left_side pl-3">
+                        @if (!Model.Likes.Exists(l => l.UserId == ViewBag.UserId))
+                        {
+                            <a class="text-white" asp-controller="Instagram" asp-route-id="@Model.Id" asp-action="Like">
+                                <i class="far fa-heart" aria-hidden="true"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="text-white" asp-controller="Instagram" asp-route-id="@Model.Id" asp-action="RemoveLike">
+                                <i class="fas fa-heart" aria-hidden="true" style="color: deeppink; margin-right: 10px"></i>
+                            </a>
+                        }
+                        <i class="far fa-comment" aria-hidden="true"></i>
+                        <div class="time">@ViewBag.time</div>
+                    </div>
+                </div>
+                <hr class="my-1 mb-0" />
+            </div>
+
+            <div class="comments_box">
+                <form method="post" asp-controller="Instagram" asp-action="AddComment" asp-anti-forgery="true">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="form-inline">
+                        <div class="input_field pl-3">
+                            <input type="text" placeholder="Add a Comment..." name="text">
+                        </div>
+                        <input type="hidden" name="action" value="details" />
+                        <div class="btn"><button type="submit">Post</button></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+<style>
+    .myimg {
+        width: 530px;
+        height: 530px;
+        object-fit: cover;
+    }
+
+    .avatar {
+        vertical-align: middle;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+    }
+    
+    .Model {
+        width: 640px;
+        background: #ffffff;
+        overflow: hidden;
+        border-radius: 3px;
+        border: 1px solid #dbdbdb;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        margin-bottom: 30px;
+    }
+
+    .instagram-card-user-name {
+        font-weight: 600;
+        color: #262626;
+        margin-left: 20px;
+        color: black;
+    }
+
+    .top_bar {
+        width: 100%;
+        padding: 10px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .profile_img {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+        .profile_img img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: inline-block;
+            object-fit: cover;
+        }
+
+    .main_img {
+        width: 640px;
+        height: 640px;
+        margin-bottom: 5px;
+    }
+
+        .main_img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .Model-footer {
+        position: absolute;
+        bottom: 50px;
+        width: 100%;
+    }
+
+    .icons {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+    }
+
+        .icons .far, .icons .fas {
+            font-size: 27px;
+            cursor: pointer;
+        }
+
+        .icons .left_side .far {
+            margin-right: 12px;
+            color: #010101;
+            -webkit-text-stroke: 0.5px white;
+        }
+
+    .fa-comment {
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+    }
+
+    .likeCount p {
+        color: #010101;
+        font-size: 14px;
+    }
+
+    .time {
+        font-size: 14px;
+        color: #dbdbdb;
+        padding: 0;
+    }
+
+    .comments_box {
+        display: flex;
+        position: absolute;
+        bottom: 0;
+    }
+
+    .icon {
+        padding: 8px 16px 8px 0;
+        font-size: 24px;
+    }
+
+    .input_field input {
+        width: 100%;
+        border: none !important;
+        outline: none;
+    }
+
+    .btn button {
+        background: transparent;
+        outline: none;
+        border: none;
+        color: #207be2;
+        font-weight: 600;
+        cursor: pointer;
+        align-self: flex-end;
+    }
+
+    .post {
+        width: 900px;
+        background: #ffffff;
+        overflow: hidden;
+        border-radius: 3px;
+        border: 1px solid #dbdbdb;
+        margin-bottom: 30px;
+        margin: 0 auto;
+        float: none;
+        margin-bottom: 10px;
+    }
+
+    .comment-section {
+        max-height: 331px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        word-wrap: break-word;
+    }
+        .comment-section::-webkit-scrollbar {
+            display: none;
+        }
+</style>

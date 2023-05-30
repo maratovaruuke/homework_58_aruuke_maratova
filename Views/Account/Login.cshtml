@@ -1,0 +1,66 @@
+﻿@model homework_59_aruuke_maratova.Models.ViewModels.LoginViewModel
+
+<div class="row">
+    <div class="col-6 col-sm-2">
+        <h2>Log in</h2>
+    </div>
+    <div class="col-6 col-sm-2">
+        <a asp-action="Register" asp-controller="Account" class="link hover-2">Register</a>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" asp-controller="Account" asp-action="Login" asp-anti-forgery="true" asp-route-returnUrl="@Model.ReturnUrl">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Login">Email or username</label>
+                <input asp-for="Login" class="form-control" />
+                <span asp-validation-for="Login" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password"></span>
+            </div>
+            <div class="form-check">
+                <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
+                <label asp-for="RememberMe" class="form-check-label"></label>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Log in</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .link {
+        position: relative;
+        text-decoration: none;
+        padding: 10px 0;
+        color: black;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    a:hover {
+        text-decoration: none;
+        color: black;
+    }
+
+    .hover-2:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 3px;
+        transform: scaleX(0);
+        background-color: brown;
+        transition: transform 0.3s;
+    }
+
+    .hover-2:hover:after {
+        transform: scaleX(1);
+    }
+</style>

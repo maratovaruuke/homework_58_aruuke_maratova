@@ -1,0 +1,151 @@
+﻿@using homework_59_aruuke_maratova.Enums
+
+@model homework_59_aruuke_maratova.Models.ViewModels.EditProfileViewModel
+
+@{
+    ViewBag.Title = "Edit Profile";
+    Layout = "_Layout";
+}
+
+<div class="box">
+    <form method="post" asp-controller="Instagram" asp-action="EditProfile" enctype="multipart/form-data">
+        <input type="hidden" asp-for="@Model.User.Id" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="profile_img mb-4">
+            <img src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.User.Avatar))" alt="Avatar">
+            <p class="instagram-card-user-name mb-0">@Model.User.UserName</p>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="@Model.NewAvatar">Change Profile Photo</label>
+            <input asp-for="@Model.NewAvatar" type="file" class="form-control-file" />
+            <span asp-validation-for="@Model.NewAvatar" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.User.Name"></label>
+            @if (Model.User.Name != null)
+            {
+                <input value="@Model.User.Name" asp-for="@Model.User.Name" class="form-control form-control-sm" />
+            }
+            else
+            {
+                <input asp-for="@Model.User.Name" class="form-control form-control-sm" placeholder="Name" />
+            }
+            <small class="form-text text-muted">
+                Help people discover your account by using the name you're known by: either your full name, nickname, or business name.
+            </small>
+            <span asp-validation-for="@Model.User.Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.User.UserName">Username</label>
+            <input value="@Model.User.UserName" asp-for="@Model.User.UserName" class="form-control form-control-sm" />
+            <span asp-validation-for="@Model.User.UserName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.User.Bio"></label>
+            @if (Model.User.Bio != null)
+            {
+                <textarea value="@Model.User.Bio" asp-for="@Model.User.Bio" class="form-control form-control-sm"></textarea>
+            }
+            else
+            {
+                <textarea asp-for="@Model.User.Bio" class="form-control form-control-sm"></textarea>
+            }
+            <span asp-validation-for="@Model.User.Bio" class="text-danger"></span>
+        </div>
+
+        <small class="form-text text-muted pb-2">
+            <strong>Personal Information</strong><br />Provide your personal information, even if the account is used for a business,
+            a pet or something else. This won't be a part of your public profile.
+        </small>
+
+        <div class="form-group">
+            <label asp-for="@Model.User.Email"></label>
+            <input value="@Model.User.Email" asp-for="@Model.User.Email" class="form-control form-control-sm" />
+            <span asp-validation-for="@Model.User.Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.User.PhoneNumber">Phone Number</label>
+            @if (Model.User.PhoneNumber != null)
+            {
+                <input value="@Model.User.PhoneNumber" asp-for="@Model.User.PhoneNumber" type="number" class="form-control form-control-sm" />
+            }
+            else
+            {
+                <input asp-for="@Model.User.PhoneNumber" type="number" class="form-control form-control-sm" />
+            }
+            <span asp-validation-for="@Model.User.PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.User.Gender"></label>
+            @if (Model.User.Gender != 0)
+            {
+                <select asp-for="@Model.User.Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-control"> </select>
+            }
+            else
+            {
+                <select asp-for="@Model.User.Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-control">
+                    <option value="" disabled selected>Select gender</option>
+                </select>
+            }
+            <span asp-validation-for="@Model.User.Gender" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+</div>
+
+<style>
+    select option:disabled {
+        display: none;
+    }
+
+    .box {
+        width: 700px;
+        background: #ffffff;
+        overflow: hidden;
+        border-radius: 3px;
+        border: 1px solid #dbdbdb;
+        margin-bottom: 30px;
+        margin: 0 auto;
+        float: none;
+        margin-bottom: 10px;
+        padding: 20px 100px;
+    }
+
+    label {
+        font-weight: 600;
+        padding-right: 20px;
+    }
+
+    .profile_img {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+        .profile_img img {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: inline-block;
+            object-fit: cover;
+        }
+
+    .instagram-card-user-name {
+        font-weight: 600;
+        color: #262626;
+        margin-left: 60px;
+        font-size: 18px;
+    }
+</style>

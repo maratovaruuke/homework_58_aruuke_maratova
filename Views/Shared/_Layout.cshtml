@@ -3,28 +3,69 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - homework_59_aruuke_maratova</title>
+    <title>@ViewData["Title"] &#8226 Instagram</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/homework_59_aruuke_maratova.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/fontawesome.min.css" />
 </head>
+<style>
+    .button-icons {
+        margin-left: 40px !important;
+    }
+</style>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">homework_59_aruuke_maratova</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow">
+            <div class="container">
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="navbar-brand text-dark p-1" asp-controller="Instagram" asp-action="Feed">
+                                    <span style="font-size: 1.3em; border-right: black solid 1px; padding: 0; padding-right: 10px;"><i class="fab fa-instagram"></i></span>
+                                    <img src="https://www.dafont.com/forum/attach/orig/8/1/815933.png?1" style="width: 90px; height: 26px; padding: 0; padding-left: 7px;" />
+                                </a>
+                            </li>
+
+                            <li class="nav-item ml-auto">
+                                @{
+                                    Html.RenderPartial("SearchPartial");
+                                }
+                            </li>
+
+                            <li class="nav-item text-dark ml-3 row button-icons">
+                                <a class="nav-link text-dark p-0 col pt-1" asp-route-id="@ViewBag.UserId" asp-controller="Posts" asp-action="Create">
+                                    <span style="font-size: 1.6em; margin-left: 40px">
+                                        <i class="fas fa-plus-circle"></i>
+                                    </span>
+                                </a>
+
+                                <div class="dropdown col  ml-3">
+                                    <button class="btn btn-link" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span style="font-size: 1.3em; color: black"><i class="far fa-user"></i></span>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" asp-route-id="@ViewBag.UserId" asp-controller="Instagram" asp-action="Profile">Profile</a>
+
+                                        <div class="dropdown-divider"></div>
+                                        <form class="dropdown-item" method="post" asp-controller="Account" asp-action="LogOut">
+                                            <input class="border-0 btn-light bg-white" type="submit" value="Log out" style="color: black;" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </li>
+
+                        }
+                        else
+                        {
+                            <li class="nav-item ml-auto">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Log in</a>
+                            </li>
+                            <li class="nav-item" style="vertical-align: middle">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Sign up</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -37,13 +78,20 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - homework_59_aruuke_maratova - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container text-center">
+            &copy; 2021 Instagram from Facebook
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
+
+<style>
+    .navbar {
+        padding: 3px 30px;
+        margin-bottom: 30px;
+        }
+</style>

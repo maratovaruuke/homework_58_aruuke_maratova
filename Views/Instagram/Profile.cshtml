@@ -1,0 +1,216 @@
+﻿@using homework_59_aruuke_maratova.Controllers
+@model User
+@{
+    ViewBag.Title = "@" + @Model.UserName;
+    Layout = "_Layout";
+}
+
+<div style="max-width: 935px; margin: 0 auto 0;">
+    <div class="row px-5 justify-content-md-center">
+        <div class="col-4 text-center">
+            <img class="avatar" src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.Avatar))" />
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col-4">
+                    <h1 class="display-4" style="font-size: 28px">@Model.UserName</h1>
+                </div>
+                <div class="col-8 align-self-start">
+                    @if (ViewBag.UserId == Model.Id)
+                    {
+                        <a class="btn btn-outline-secondary text-dark" asp-controller="Instagram" asp-action="EditProfile" 
+                           asp-route-id="@Model.Id">Edit Profile</a>
+                    }
+                    else
+                    {
+                        if (Model.Followers.FirstOrDefault(f => f.FollowerId == ViewBag.UserId) != null)
+                        {
+                            <a class="btn btn-outline-secondary text-dark" asp-controller="Instagram" asp-action="Unfollow" asp-route-followeeId="@Model.Id">Unfollow</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-outline-secondary text-dark" asp-controller="Instagram" asp-action="Follow" asp-route-followeeId="@Model.Id">Follow</a>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="row pt-3">
+                <div class="col">@Model.Posts.Count posts</div>
+                <div class="col">@Model.Followers.Count followers</div>
+                <div class="col">@Model.Following.Count following</div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-12" style="font-weight: 600">@Model.Name</div>
+                <div class="col-12"> @Model.Bio</div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        @foreach (var post in Model.Posts)
+        {
+            <a asp-controller="Posts" asp-action="Details" asp-route-id="@post.Id">
+                <img class="post-img" src="data:image/jpeg;base64,@(Convert.ToBase64String(@post.Img))" />
+            </a>
+        }
+    </div>
+</div>
+
+<style>
+    .myimg{
+        width:530px;
+        height:530px;
+        object-fit:cover;
+    }
+
+    .post-img {
+        object-fit: cover;
+        width: 290px;
+        height: 290px;
+        margin: 0 24px 24px 0;
+        flex-direction: row;
+    }
+
+    .avatar {
+        vertical-align: middle;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+    }
+    
+    .feed {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    }
+
+    .post {
+        width: 640px;
+        background: #ffffff;
+        overflow: hidden;
+        border-radius: 3px;
+        border: 1px solid #dbdbdb;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        margin-bottom: 30px;
+    }
+
+    .instagram-card-user-name {
+        font-weight: 500;
+        color: #262626;
+        margin-left: 50px;
+    }
+
+    .top_bar {
+        width: 100%;
+        height: 60px;
+        padding: 25px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .profile_img {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .profile_img img {
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: inline-block;
+        object-fit: cover;
+    }
+
+
+    .main_img {
+        width: 640px;
+        height: 640px;
+        margin-bottom: 5px;
+    }
+
+    .main_img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .post-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .icons {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+    }
+
+    .icons .far, .icons .fas {
+        font-size: 27px;
+        cursor: pointer;
+    }
+
+    .icons .left_side .far {
+        margin-right: 12px;
+        color: #010101;
+        -webkit-text-stroke: 0.5px white;
+    }
+
+    .fa-comment {
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+    }
+
+    .likeCount p {
+        color: #010101;
+        font-size: 14px;
+    }
+
+    .time {
+        font-size: 14px;
+        color: #dbdbdb;
+        padding: 0;
+    }
+
+    .comments_box {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .icon {
+        padding: 8px 16px 8px 0;
+        font-size: 24px;
+    }
+
+    .input_field {
+        width: 100%;
+    }
+
+    .input_field input {
+        width: 100%;
+        padding: 10px;
+        border: none !important;
+        outline: none;
+    }
+
+    .btn button {
+        background: transparent;
+        padding: 10px;
+        outline: none;
+        border: none;
+        color: #207be2;
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>

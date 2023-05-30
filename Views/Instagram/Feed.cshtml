@@ -1,0 +1,226 @@
+﻿@using homework_59_aruuke_maratova.Controllers
+@using Microsoft.AspNetCore.Mvc.RazorPages
+
+@model List<Post>
+
+@{
+    ViewBag.Title = "Feed";
+    Layout = "_Layout";
+}
+
+<div class="feed">
+    @foreach (var post in Model)
+    {
+        <div class="post">
+            @{
+                foreach (var comment in post.Comments)
+                {
+                    comment.User = ViewBag.Users.Find(comment.UserId);
+                }
+            }
+            <div class="top_bar">
+                <div class="profile_img">
+                    <img src="data:image/jpeg;base64,@(Convert.ToBase64String(post.User.Avatar))" alt="Avatar">
+                    <a class="instagram-card-user-name" asp-action="Profile" asp-route-id="@post.User.Id">@post.User.UserName</a>
+                </div>
+                <i class="fa fa-ellipsis-h"></i>
+            </div>
+
+            <div class="main_img">
+                <img src="data:image/jpeg;base64,@(Convert.ToBase64String(post.Img))">
+            </div>
+
+            <div class="post-footer">
+                <div class="icons">
+                    <div class="left_side">
+                        @if (!post.Likes.Exists(l => l.UserId == ViewBag.UserId))
+                        {
+                            <a class="text-white" asp-route-id="@post.Id" asp-action="Like">
+                                <i class="far fa-heart" aria-hidden="true"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="text-white" asp-route-id="@post.Id" asp-action="RemoveLike">
+                                <i class="fas fa-heart" aria-hidden="true" style="color: deeppink; margin-right: 10px"></i>
+                            </a>
+                        }
+                        <i class="far fa-comment" aria-hidden="true"></i>
+                    </div>
+                </div>
+
+                <span>@post.Likes.Count Likes</span>
+
+                <p style="margin-bottom: 0">
+                    <span style="font-weight: bold;">@post.User.UserName</span>
+                </p>
+
+                <div class="time">@PostsController.PostUploadDate(post.CreatedAt)</div>
+
+                <div class="comments">
+                    @if (post.Comments.Count != 0)
+                    {
+                        @foreach (var comment in post.Comments.AsQueryable().OrderBy(c => c.CreatedAt))
+                        {
+                            <p><span style="font-weight: bold;">@comment.User.UserName</span> @comment.Text</p>
+                        }
+                    }
+                </div>
+            </div>
+            <hr class="mb-0" />
+            <div class="comments_box post-footer">
+                <form method="post" asp-controller="Instagram" asp-action="AddComment" asp-anti-forgery="true" asp-route-id="@post.Id">
+                    <div class="form-inline">
+                        <div class="input_field">
+                            <input type="text" placeholder="Add a Comment..." name="text">
+                        </div>
+                        <input type="hidden" name="action" value="Feed" />
+                        <div class="btn"><button type="submit">Post</button></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .feed {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    }
+
+    .post {
+        width: 640px;
+        background: #ffffff;
+        overflow: hidden;
+        border-radius: 3px;
+        border: 1px solid #dbdbdb;
+        margin-bottom: 30px;
+    }
+
+    .instagram-card-user-name {
+        font-weight: bold;
+        color: #262626;
+        margin-left: 50px;
+    }
+
+    .top_bar {
+        width: 100%;
+        height: 60px;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .profile_img {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+        .profile_img img {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: inline-block;
+            object-fit: cover;
+        }
+        
+    .main_img {
+        width: 640px;
+        height: 640px;
+        margin-bottom: 5px;
+    }
+
+        .main_img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .post-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .icons {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+    }
+
+        .icons .far, .icons .fas {
+            font-size: 27px;
+            cursor: pointer;
+        }
+
+        .icons .left_side .far {
+            margin-right: 12px;
+            color: #010101;
+            -webkit-text-stroke: 0.5px white;
+        }
+
+    .fa-comment {
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+    }
+
+    .likeCount p {
+        color: #010101;
+        font-size: 14px;
+    }
+
+    .time {
+        font-size: 14px;
+        color: #dbdbdb;
+        padding: 0;
+    }
+
+    .comments_box {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .icon {
+        padding: 8px 16px 8px 0;
+        font-size: 24px;
+    }
+    
+        .input_field input {
+            width: 100%;
+            padding: 10px;
+            border: none !important;
+            outline: none;
+        }
+
+    .btn button {
+        background: transparent;
+        padding: 10px;
+        outline: none;
+        border: none;
+        color: #207be2;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .comments {
+        max-height: 100px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        word-wrap: break-word;
+    }
+
+    .comment-section::-webkit-scrollbar {
+        display: none; 
+    }
+</style>
